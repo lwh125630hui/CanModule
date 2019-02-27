@@ -28,7 +28,7 @@ message(STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}] building
 IF (WIN32)	
 	IF(	CANMODULE_BUILD_VENDORS )
 		add_subdirectory(systec)
-		add_subdirectory(anagate)
+		#add_subdirectory(anagate)
 		#add_subdirectory(pkcan)
 	ENDIF()
 ELSE()	
