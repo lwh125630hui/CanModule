@@ -24,32 +24,20 @@ project(stcan)
 
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/CanInterfaceImplementations/output/)
 
-# check if toolchain injection was correct for systec
-# for windows we should use the default systec installer and location
-# for linux we need libsocketcan
-if( NOT DEFINED SYSTEC_LIB_PATH ) 
-	message( STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: Required variable SYSTEC_LIB_FILE has not been defined, take default." )
-	message( STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: Required variable SYSTEC_INC_DIR has not been defined, take default." )
-	message( STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: Required variable SYSTEC_LIB_PATH has not been defined, take default." )
-	if(WIN32)
-		# using the default installer/location provided by systec for windows
-		SET(SYSTEC_INC_DIR "C:/Program Files (x86)/SYSTEC-electronic/USB-CANmodul Utility Disk/Examples/Include")
-		SET(SYSTEC_LIB_PATH "C:/Program Files (x86)/SYSTEC-electronic/USB-CANmodul Utility Disk/Examples/Lib")
-		if( 64BIT )  
-			SET(SYSTEC_LIB_FILE "USBCAN64.lib")
-		else()
-			SET(SYSTEC_LIB_FILE "USBCAN32.lib")
-		endif()
-		message(STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: windows SYSTEC_LIB_PATH= ${SYSTEC_LIB_PATH}]")
-	else()
-	    # use socketcan for linux, get sources 
-	    # from i.e. ssh://git@gitlab.cern.ch:7999/mludwig/CAN_libsocketcan.git and build it
-		SET(SYSTEC_HEADERS "/opt/CAN_libsocketcan/include")
-		SET(SYSTEC_PATH_LIBS "/opt/CAN_libsocketcan/src/.libs")
-		SET(SYSTEC_LIB_FILE "libsocketcan.so")
-		message( STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: default path might not work, please get socketcan and correct it." )
-		message(STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: linux SYSTEC_LIB_PATH= ${SYSTEC_LIB_PATH}]")
-	endif()
+if(WIN32)
+	# using the default installer/location provided by systec for windows
+	SET(SYSTEC_HEADERS "C:/Program Files (x86)/SYSTEC-electronic/USB-CANmodul Utility Disk/Examples/Include")
+	SET(SYSTEC_PATH_LIBS "C:/Program Files (x86)/SYSTEC-electronic/USB-CANmodul Utility Disk/Examples/Lib")
+	SET(SYSTEC_LIB_FILE "USBCAN64.lib")
+	message(STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: windows SYSTEC_PATH_LIBS= ${SYSTEC_PATH_LIBS} SYSTEC_LIB_FILE= ${SYSTEC_LIB_FILE}]")
+else()
+	# use socketcan for linux, get sources 
+	# from i.e. ssh://git@gitlab.cern.ch:7999/mludwig/CAN_libsocketcan.git and build it
+	SET(SYSTEC_HEADERS "/opt/CAN_libsocketcan/include")
+	SET(SYSTEC_PATH_LIBS "/opt/CAN_libsocketcan/src/.libs")
+	SET(SYSTEC_LIB_FILE "libsocketcan.so")
+	message( STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: default path might not work, please get socketcan and correct it." )
+	message(STATUS "[${CMAKE_CURRENT_LIST_FILE}:${CMAKE_CURRENT_LIST_LINE}]: linux SYSTEC_LIB_PATH= ${SYSTEC_LIB_PATH}]")
 endif()
 
 link_directories( ${SYSTEC_PATH_LIBS} )
