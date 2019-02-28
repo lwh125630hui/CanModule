@@ -120,6 +120,11 @@ STCanScan::~STCanScan()
 bool STCanScan::createBus(const string name,const string parameters)
 {	
 	MLOG(DBG, this) << __FUNCTION__ << " name= " << name << " parameters= " << parameters << ", configuring CAN board";
+
+	// %%BF hack
+	static bool alreadyRun = false;
+	if (alreadyRun) return true;
+
 	m_sBusName = name;
 	int returnCode = configureCanBoard(name, parameters);
 	if (returnCode < 0) {
@@ -133,6 +138,10 @@ bool STCanScan::createBus(const string name,const string parameters)
 		return false;
 	}
 	MLOG(DBG,this) << __FUNCTION__ <<  " Bus [" << name << "] created with parameters [" << parameters << "]";
+
+	// %%BF hack
+	alreadyRun = true;
+
 	return true;
 }
 
