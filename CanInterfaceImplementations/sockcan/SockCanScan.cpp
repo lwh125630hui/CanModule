@@ -307,7 +307,10 @@ int CSockCanScan::configureCanBoard(const string name,const string parameters)
 {
 	vector<string> parset;
 	parset = parseNameAndParameters( name, parameters );
-	m_channelName = parset[1];
+
+	std::ostringstream channelName;
+	channelName << "can" << parset[1];
+	m_channelName = channelName.str();
 	return openCanPort();
 }
 
