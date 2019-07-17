@@ -72,7 +72,7 @@ STCanScan::STCanScan():
 
 
 /**
- * thread to supervise port activity
+ * thread to read msg
  */
 DWORD WINAPI STCanScan::CanScanControlThread(LPVOID pCanScan)
 {
@@ -80,6 +80,9 @@ DWORD WINAPI STCanScan::CanScanControlThread(LPVOID pCanScan)
 	tCanMsgStruct readCanMessage;
 	STCanScan *canScanInstancePointer = reinterpret_cast<STCanScan *>(pCanScan);
 	MLOGST(DBG,canScanInstancePointer) << "CanScanControlThread Started. m_CanScanThreadShutdownFlag = [" << canScanInstancePointer->m_CanScanThreadShutdownFlag <<"]";
+	const int maxStatusCounter = 1000;
+	int statusCounter = 0;
+
 	while (canScanInstancePointer->m_CanScanThreadShutdownFlag) {
 		status = UcanReadCanMsgEx(canScanInstancePointer->m_UcanHandle, (BYTE *)&canScanInstancePointer->m_channelNumber, &readCanMessage, 0);
 		if (status == USBCAN_SUCCESSFUL) {
@@ -96,11 +99,46 @@ DWORD WINAPI STCanScan::CanScanControlThread(LPVOID pCanScan)
 
 			canScanInstancePointer->canMessageCame(canMsgCopy);
 			canScanInstancePointer->m_statistics.onReceive( readCanMessage.m_bDLC );
+
+			statusCounter = 0;
 		} else {
 			if (status == USBCAN_WARN_NODATA) {
-				Sleep(100);
+
+				/**
+				 * if this happens many successive times we actually might have lost the connection to the module
+				 * ( power failure .. ?). To detect that, lets read a status, and if it is OK, then there were
+				 * simply no messages. If the status fails we need to reconnect, or we have yet another problem.
+				 */
+				statusCounter++;
+				if ( statusCounter > maxStatusCounter ){
+					tStatusStruct mstatus;
+					status = UcanGetStatusEx(canScanInstancePointer->m_UcanHandle, (BYTE *)&canScanInstancePointer->m_channelNumber, &mstatus);
+					switch ( status ){
+					case USBCAN_SUCCESSFUL:{
+						Sleep(100); // all is fine, there just was no message
+						break;
+					}
+
+					case USBCAN_ERR_ILLHANDLE: // can't find hw, lets try to reconnect
+					case USBCAN_ERR_ILLHW: {
+						MLOGST(WRN,canScanInstancePointer) << "can't find hardware. Trying to reconnect with some hope.";
+
+
+						Sleep(5000); // don't hammer the OS
+						break;
+					}
+					default: { // all the rest: some windows or hw problem external to CanModule
+						MLOGST(ERR,canScanInstancePointer) << "HW/system error. CanModule can't do anything except trying to reconnect";
+						Sleep(5000); // don't hammer the OS
+						break;
+					}
+					} // switch
+				}
+				// Sleep(100);
+
 			} else {
 				canScanInstancePointer->sendErrorCode(status);
+				MLOGST(DBG,canScanInstancePointer) << " got an error, need to reconnect";
 			}
 		}
 	}
