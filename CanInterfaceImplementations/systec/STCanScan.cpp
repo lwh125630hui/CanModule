@@ -115,7 +115,7 @@ DWORD WINAPI STCanScan::CanScanControlThread(LPVOID pCanScan)
 				if ( statusCounter > maxStatusCounter ){
 					statusCounter = 0;
 					tStatusStruct mstatus;
-					status = UcanGetStatusEx(canScanInstancePointer->m_UcanHandle, &mstatus);
+					status = UcanGetStatusEx(canScanInstancePointer->m_UcanHandle, (BYTE) canScanInstancePointer->m_channelNumber, &mstatus);
 					MLOGST(TRC,canScanInstancePointer) << "got no CAN msg for a while, read status= " << status;
 					switch ( status ){
 					case USBCAN_SUCCESSFUL:{
