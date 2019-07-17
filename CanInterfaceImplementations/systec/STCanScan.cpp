@@ -84,6 +84,8 @@ DWORD WINAPI STCanScan::CanScanControlThread(LPVOID pCanScan)
 	int statusCounter = 0;
 
 	while (canScanInstancePointer->m_CanScanThreadShutdownFlag) {
+
+		// this is a non-blocking call and it always returns
 		status = UcanReadCanMsgEx(canScanInstancePointer->m_UcanHandle, (BYTE *)&canScanInstancePointer->m_channelNumber, &readCanMessage, 0);
 		if (status == USBCAN_SUCCESSFUL) {
 			if (readCanMessage.m_bFF == USBCAN_MSG_FF_RTR)
@@ -111,10 +113,13 @@ DWORD WINAPI STCanScan::CanScanControlThread(LPVOID pCanScan)
 				 */
 				statusCounter++;
 				if ( statusCounter > maxStatusCounter ){
+					statusCounter = 0;
 					tStatusStruct mstatus;
 					status = UcanGetStatusEx(canScanInstancePointer->m_UcanHandle, (BYTE *)&canScanInstancePointer->m_channelNumber, &mstatus);
+					MLOGST(TRC,canScanInstancePointer) << "got no CAN msg for a while, read status= " << status;
 					switch ( status ){
 					case USBCAN_SUCCESSFUL:{
+						MLOGST(TRC,canScanInstancePointer) << "OK, all is fine, just no messages";
 						Sleep(100); // all is fine, there just was no message
 						break;
 					}
@@ -122,8 +127,6 @@ DWORD WINAPI STCanScan::CanScanControlThread(LPVOID pCanScan)
 					case USBCAN_ERR_ILLHANDLE: // can't find hw, lets try to reconnect
 					case USBCAN_ERR_ILLHW: {
 						MLOGST(WRN,canScanInstancePointer) << "can't find hardware. Trying to reconnect with some hope.";
-
-
 						Sleep(5000); // don't hammer the OS
 						break;
 					}
