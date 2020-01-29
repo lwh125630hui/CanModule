@@ -51,7 +51,9 @@ PKCanScan::PKCanScan():
 				m_busStatus(0),
 				m_baudRate(0),
 				m_idCanScanThread(0),
-				m_CanScanThreadRunEnableFlag(false)
+				m_CanScanThreadRunEnableFlag(false),
+				m_logItHandlePk(0),
+				m_canObjHandler(0)
 {
 	m_statistics.beginNewRun();
 }
@@ -358,7 +360,8 @@ bool PKCanScan::sendErrorCode(long status)
  */
 bool PKCanScan::sendMessage(short cobID, unsigned char len, unsigned char *message, bool rtr)
 {
-	MLOGPK(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	// MLOGPK(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	MLOGPK(DBG,this) << "Sending message: [" << ( message == 0  ? "" : CanModuleUtils::toHexString(message)) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
 
 	TPCANStatus tpcanStatus;
 	TPCANMsg tpcanMessage;

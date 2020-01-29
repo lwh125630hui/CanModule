@@ -408,7 +408,8 @@ int CSockCanScan::openCanPort()
  */
 bool CSockCanScan::sendMessage(short cobID, unsigned char len, unsigned char *message, bool rtr)
 {
-	MLOGSOCK(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+//	MLOGSOCK(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	MLOGSOCK(DBG,this) << "Sending message: [" << ( message == 0  ? "" : CanModuleUtils::toHexString(message)) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
 
 	int messageLengthToBeProcessed;
 

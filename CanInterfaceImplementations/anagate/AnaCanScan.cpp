@@ -431,7 +431,9 @@ bool AnaCanScan::sendErrorCode(AnaInt32 status)
  */
 bool AnaCanScan::sendMessage(short cobID, unsigned char len, unsigned char *message, bool rtr)
 {
-	MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" : CanModuleUtils::toHexString(message)) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+
 	AnaInt32 anaCallReturn;
 	unsigned char *messageToBeSent[8];
 	AnaInt32 flags = 0x0;
