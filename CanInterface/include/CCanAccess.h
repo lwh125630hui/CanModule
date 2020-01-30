@@ -134,9 +134,15 @@ public:
 	virtual bool sendMessage(CanMessage *canm, bool dummy) // use overload to switch it on/off
 	{
 #ifdef _WIN32
-		Sleep( 20 );
+		Sleep( 10 );
 #else
-		usleep( 20000 );
+			struct timespec tim, tim2;
+			tim.tv_sec = 0;
+			tim.tv_nsec = 10000000;
+			if(nanosleep(&tim , &tim2) < 0 ) {
+				std::cout << "waiting 10ms failed (nanosleep)";
+			}
+			//	usleep( 10000 );
 #endif
 		return sendMessage(short(canm->c_id), canm->c_dlc, canm->c_data, canm->c_rtr);
 	}
