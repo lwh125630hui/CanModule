@@ -433,7 +433,12 @@ bool AnaCanScan::sendMessage(short cobID, unsigned char len, unsigned char *mess
 {
 	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" :  CanModuleUtils::toHexString(message)) << " (hex)], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
 	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" :  (const char *) message) << " (char)], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
-	//	MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	MLOGANA(DBG,this) << "slow down message sending to 50Hz";
+#ifdef _WIN32
+			Sleep( 20 );
+#else
+			usleep( 20000 );
+#endif
 
 	AnaInt32 anaCallReturn;
 	unsigned char *messageToBeSent[8];
