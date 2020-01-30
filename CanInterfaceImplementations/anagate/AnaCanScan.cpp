@@ -182,7 +182,7 @@ void WINAPI InternalCallback(AnaUInt32 nIdentifier, const char * pcBuffer, AnaIn
 	result+="dlc=" + CanModuleUtils::toString(int(f.c_dlc)) + " data=[";
 
 	for (int i=0; i<f.c_dlc; i++)
-		result+= CanModuleUtils::toHexString((unsigned int)f.c_data[i], 2, '0')+" ";
+		result+= CanModuleUtils::toHexString((unsigned int)f.c_data[i], 2, '0');
 	result += "]]";
 
 	return result;
@@ -431,8 +431,9 @@ bool AnaCanScan::sendErrorCode(AnaInt32 status)
  */
 bool AnaCanScan::sendMessage(short cobID, unsigned char len, unsigned char *message, bool rtr)
 {
-	MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" : CanModuleUtils::toHexString(message)) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
-	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" :  CanModuleUtils::toHexString(message)) << " (hex)], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" :  (const char *) message) << " (char)], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
+	//	MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" : (const char *) message) << "], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
 
 	AnaInt32 anaCallReturn;
 	unsigned char *messageToBeSent[8];
@@ -808,6 +809,7 @@ void AnaCanScan::startAlive( int aliveTime_sec ){
 
 bool AnaCanScan::sendMessage(CanMessage *canm)
 {
+	MLOGANA(TRC,this) << "API " << AnaCanScan::canMessageToString(*canm);
 	return sendMessage(short(canm->c_id), canm->c_dlc, canm->c_data, canm->c_rtr);
 }
 
