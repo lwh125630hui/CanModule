@@ -59,6 +59,7 @@ boost::mutex anagateReconnectMutex;
 /* static */ AnaInt32 AnaCanScan::s_canHandleArray[256];
 /* static */ Log::LogComponentHandle AnaCanScan::st_logItHandleAnagate = 0;
 /* static */ std::map<string,bool> AnaCanScan::reconnectInProgress_map;
+/* static */ bool AnaCanScan::slow = false;
 
 #define MLOGANA(LEVEL,THIS) LOG(Log::LEVEL, AnaCanScan::st_logItHandleAnagate) << __FUNCTION__ << " " << " anagate bus= " << THIS->getBusName() << " "
 
@@ -434,11 +435,14 @@ bool AnaCanScan::sendMessage(short cobID, unsigned char len, unsigned char *mess
 	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" :  CanModuleUtils::toHexString(message)) << " (hex)], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
 	//MLOGANA(DBG,this) << "Sending message: [" << ( message == 0  ? "" :  (const char *) message) << " (char)], cobID: [" << cobID << "], Message Length: [" << static_cast<int>(len) << "]";
 	MLOGANA(DBG,this) << "slow down message sending to 50Hz";
+
+	if ( AnaCanScan::slow ){
 #ifdef _WIN32
 			Sleep( 20 );
 #else
 			usleep( 20000 );
 #endif
+	}
 
 	AnaInt32 anaCallReturn;
 	unsigned char *messageToBeSent[8];

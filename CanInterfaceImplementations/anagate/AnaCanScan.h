@@ -75,6 +75,7 @@ public:
 	void setConnectWaitTime( int timeout_ms );
 
 	static std::string canMessageToString(CanMessage &f);
+	static void slowDown( bool flag ){ 	AnaCanScan::slow = flag; }
 
 private:
 
@@ -88,6 +89,8 @@ private:
 	AnaInt32 m_UcanHandle; //Instance of the can handle
 	CanStatistics m_statistics; //Instance of Can Statistics
     AnaInt32 m_timeout; 		// connect_wait time
+
+    static bool slow;
 
     /**
      * we would like to keep logging from a few static methods as well, since one IP
