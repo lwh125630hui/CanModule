@@ -53,7 +53,8 @@ will use vcan (virtual can) instead under linux for USB/socketcan bridges. P has
 	CanMessage cm;
 	CanModule::CanLibLoader *libloader = CanModule::CanLibLoader::createInstance( libName );
 	cca = libloader->openCanBus( port, parameters );
-	cca->sendMessage( &cm );
+	cca->sendMessage( &cm ); // send messages as fast as possible
+   cca->sendMessage( &cm, true ); // throttle message frequency down to less than 100Hz for slow hardware
 	cca->canMessageCame.connect( &onMessageRcvd ); // connect a reception handler 
 	
 	

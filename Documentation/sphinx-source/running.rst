@@ -30,7 +30,16 @@ Peak
 * linux: libsockcan.so (standard API), driver kernel module pcan.ko and dependent modules
 * windows: libpkcan.dll (standard API), PKCANBASIC.dll
 
+message speed
+-------------
+the bitrate bits/s of the CAN bus has to be adjusted to make both the master and all slaves 
+happy. Many older modules use 125000bit/s, and some newer are at 250000bit/s. Nevertheless it 
+turns out that sometimes a high rate of messages can not be processed properly by a slave. A "throttled"
+version of sendMessage(...) can be used to slow down the message frequency to (below) 100Hz:
+sendmessage( &cm, true ) ; as descripbed in the standardAPI. Some rare collisions can occur on the
+CAN bus which are only reported as ACK fails directly on the bus but are not seen by the software. 
 
+Message throttling seems to be needed for certain ISEG controllers. 
 
 .. _Status: https://edms.cern.ch/file/2089743/1/CanModuleStatus2019_v4.pptx
   
