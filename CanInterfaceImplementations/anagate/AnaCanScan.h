@@ -75,7 +75,6 @@ public:
 	void setConnectWaitTime( int timeout_ms );
 
 	static std::string canMessageToString(CanMessage &f);
-	static void slowDown( bool flag ){ 	AnaCanScan::slow = flag; }
 
 private:
 
