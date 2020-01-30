@@ -133,12 +133,12 @@ public:
 	}
 	virtual bool sendMessage(CanMessage *canm, bool dummy) // use overload to switch it on/off
 	{
-		return sendMessage(short(canm->c_id), canm->c_dlc, canm->c_data, canm->c_rtr);
 #ifdef _WIN32
-			Sleep( 20 );
+		Sleep( 20 );
 #else
-			usleep( 20000 );
+		usleep( 20000 );
 #endif
+		return sendMessage(short(canm->c_id), canm->c_dlc, canm->c_data, canm->c_rtr);
 	}
 
 	//Returns bus name
