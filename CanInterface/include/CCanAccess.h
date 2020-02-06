@@ -131,16 +131,17 @@ public:
 	{
 		return sendMessage(short(canm->c_id), canm->c_dlc, canm->c_data, canm->c_rtr);
 	}
-	virtual bool sendMessage(CanMessage *canm, bool dummy) // use overload to switch it on/off
+	// throttle down message frequency to roughly 1kHz
+	virtual bool sendMessage(CanMessage *canm, bool dummy) // use overload to switch it on/off, don't care about the value
 	{
 #ifdef _WIN32
-		Sleep( 10 );
+		Sleep( 1 );
 #else
 			struct timespec tim, tim2;
 			tim.tv_sec = 0;
-			tim.tv_nsec = 10000000;
+			tim.tv_nsec = 1000000;
 			if(nanosleep(&tim , &tim2) < 0 ) {
-				std::cout << "waiting 10ms failed (nanosleep)";
+				std::cout << "waiting 1ms failed (nanosleep)";
 			}
 			//	usleep( 10000 );
 #endif
